@@ -1,0 +1,454 @@
+
+package checkersgame;
+
+
+import java.util.*;
+import java.util.Scanner;
+//import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+public class CheckersGame {
+
+   public static String CB[][]  = {
+         {"[ ]", "[b]", "[ ]", "[b]", "[ ]", "[b]", "[ ]", "[b]"},
+         {"[b]", "[ ]", "[b]", "[ ]", "[b]", "[ ]", "[b]", "[ ]"},
+         {"[ ]", "[b]", "[ ]", "[b]", "[ ]", "[b]", "[ ]", "[b]"},
+         {"[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]"},
+         {"[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]"},
+         {"[r]", "[ ]", "[r]", "[ ]", "[r]", "[ ]", "[r]", "[ ]"},
+         {"[ ]", "[r]", "[ ]", "[r]", "[ ]", "[r]", "[ ]", "[r]"},
+         {"[r]", "[ ]", "[r]", "[ ]", "[r]", "[ ]", "[r]", "[ ]"},
+         };
+   
+   
+   private static char turn = 'r';
+   private static int redCount = 12;
+   private static int blackCount = 12;
+   
+   public static int piece[] = new int [2];
+   public static int space[] = new int[2];
+   private static boolean pieceTaken = false;
+   private static int xChange;
+   private static int yChange;
+   private static JFrame frame = new JFrame("DialogBox");
+  
+   
+   
+    public static void main(String[] args) {
+    
+        // Test point 6 3, 5 4;
+        //JFileChooser fc = new JFileChooser();
+        //fc.showOpenDialog(null);
+        //ArrayList<Integer> stringArray = new ArrayList<Integer>();
+        //stringArray.   
+        
+    boolean legal;
+    String pieceMove;
+    String spaceMove;
+    Scanner stdin = new Scanner(System. in);    
+    
+    while (redCount != 0 && blackCount != 0)
+    {
+        display();
+        System.out.print("\n" + Character.toUpperCase(turn) + " - Piece: ");
+        pieceMove = stdin.nextLine();
+        System.out.print(Character.toUpperCase(turn) +" - To: ");
+        spaceMove = stdin.nextLine();
+
+        //seperates string into coordinates
+        // piece[]
+        coord(pieceMove, true);
+       // space[]
+        coord(spaceMove, false);
+    
+        //tests if its legal
+        legal = canMove();
+        //if it's legal then make the move
+        thenMove(legal);
+        
+    }
+    
+    
+    }
+
+    public static void coord(String input, boolean var)
+    {
+        int point[] = new int[2];
+        char temp;
+        
+        
+        //System.out.print(input.charAt(0));
+        temp = input.charAt(0);
+        point[0] = Character.getNumericValue(temp);
+        temp = input.charAt(2);
+        point[1] = Character.getNumericValue(temp);
+        
+        if (var == true)
+        {
+            piece = point;
+        }
+        else
+        {
+            space = point;
+        }
+    }
+    public static void display()
+    {
+        System.out.print("    1  2  3  4  5  6  7  8 \n");
+        for (int i = 0; i < 8; i++)
+        {
+            System.out.print(" " + (i+1)+ " ");
+            // the loop below loops 8 time per loop
+            // 64 times in total (the same # as the # of squares on the board)
+            for (int counter = 0; counter < 8; counter++)
+            {
+                //example run 
+                //System.out.print(CB[0][1]);
+                //System.out.print(CB[o][2]);
+                
+                System.out.print(CB[i][counter]);
+            }
+            System.out.println();
+            
+        }
+     }
+    
+    public static boolean canMove()
+    {
+        boolean legal = false;
+        boolean dirLoR = false;
+        String square;
+
+        // test if the coordinate of the piece you want to move
+        // is  a piece and that its your color
+        // So in this case is it a red / non king piece?
+        if (CB[piece[0]-1][piece[1]-1] == "[r]" && turn == 'r')
+        {
+            //Finding the displacement in x and y 
+            xChange = (space[0]-1)- (piece[0]-1);
+            yChange = (space[1]-1)-(piece[1] -1);
+            
+            //Checking to see if the space you want to move to is blank
+            //Checks a legal non-piece jumping move
+            if (CB[space[0]-1][space[1]-1] == "[ ]")
+            {
+                // In the case of a red piece the xChange can only be -1 
+                // unless your taking a piece to be legal
+                if (xChange == -1)
+                    legal = true;
+                else
+                    legal = false;
+            
+             // if yChange != 1 or -1 then direction Left or Right = false
+                dirLoR = yChange == 1 ? true
+                        :yChange == -1 ? true
+                        : false;
+           
+           
+                if (dirLoR == true && legal == true)
+                    legal = true;
+                else 
+                    legal = false;
+                
+            }
+            
+         
+            // Tests if your trying to make a legal jump/ take a piece.
+            //subracting half the xChange and half the yChange
+             square = CB[(space[0]-1)-xChange/2][(space[1]-1)-yChange/2];
+             if (square == "[b]"|| square == "[B]")
+             {
+               
+                if (xChange == -2)
+                    legal = true;
+                else
+                    legal = false;
+               
+                  
+                 dirLoR = yChange == 2 ? true
+                        :yChange == -2 ? true
+                        : false;
+                 
+                if (dirLoR == true && legal == true)
+                {
+                    legal = true;
+                    pieceTaken = true;
+                    blackCount--;
+                }
+                else
+                    legal = false;
+                
+              } 
+         
+        }
+        
+        //Specail case for kings (not limited by xChange being negative
+         if (CB[piece[0]-1][piece[1]-1] == "[R]" && turn == 'r')
+        {
+            xChange = (space[0]-1)- (piece[0]-1);
+            yChange = (space[1]-1)-(piece[1] -1);
+            
+            if (CB[space[0]-1][space[1]-1] == "[ ]")
+            {
+                if (xChange == -1||xChange == 1)
+                    legal = true;
+                else
+                    legal = false;
+            
+             
+                dirLoR = yChange == 1 ? true
+                        :yChange == -1 ? true
+                        : false;
+           
+           
+                if (dirLoR == true && legal == true)
+                    legal = true;
+                else 
+                    legal = false;
+                
+            }
+            
+             square = CB[(space[0]-1)-xChange/2][(space[1]-1)-yChange/2];
+             if (square == "[b]" || square == "[B]")
+             {
+               
+                if (xChange == -2||xChange == 2)
+                    legal = true;
+                else
+                    legal = false;
+               
+                  
+                 dirLoR = yChange == 2 ? true
+                        :yChange == -2 ? true
+                        : false;
+                 
+                if (dirLoR == true && legal == true)
+                {
+                    legal = true;
+                    pieceTaken = true;
+                    blackCount--;
+                }
+                else
+                    legal = false;
+                
+              } 
+         
+        }
+         
+         
+         
+         
+         
+        // pretty much the same concept as the red case
+        // look above if you don't understand
+        if (CB[piece[0]-1][piece[1]-1] == "[b]" && turn == 'b')
+        {
+            xChange = (space[0]-1)- (piece[0]-1);
+            yChange = (space[1]-1)-(piece[1] -1);
+            
+            if (CB[space[0]-1][space[1]-1] == "[ ]")
+            {
+                if (xChange == 1)
+                    legal = true;
+                else
+                    legal = false;
+            
+             
+                dirLoR = yChange == 1 ? true
+                        :yChange == -1 ? true
+                        : false;
+           
+           
+                if (dirLoR == true && legal == true)
+                    legal = true;
+                else 
+                    legal = false;
+                
+            }
+            
+             
+             square = CB[(space[0]-1)-xChange/2][(space[1]-1)-yChange/2];
+             if (square == "[r]"|| square == "[R]")
+             {
+                if (xChange == 2)
+                    legal = true;
+                else
+                    legal = false;
+               
+                  
+                 dirLoR = yChange == 2 ? true
+                        :yChange == -2 ? true
+                        : false;
+                 
+                if (dirLoR == true && legal == true)
+                {
+                    legal = true;
+                    pieceTaken = true;
+                    redCount--;
+                }
+                else
+                    legal = false;
+                
+              } 
+             
+        }
+        
+        
+        
+        
+        if (CB[piece[0]-1][piece[1]-1] == "[B]" && turn == 'b')
+        {
+            xChange = (space[0]-1)- (piece[0]-1);
+            yChange = (space[1]-1)-(piece[1] -1);
+            
+            if (CB[space[0]-1][space[1]-1] == "[ ]")
+            {
+                if (xChange == -1||xChange == 1)
+                    legal = true;
+                else
+                    legal = false;
+            
+             
+                dirLoR = yChange == 1 ? true
+                        :yChange == -1 ? true
+                        : false;
+           
+           
+                if (dirLoR == true && legal == true)
+                    legal = true;
+                else 
+                    legal = false;
+                
+            }
+            
+             square = CB[(space[0]-1)-xChange/2][(space[1]-1)-yChange/2];
+             if (square == "[r]" || square == "[R]")
+             {
+                if (xChange == -2||xChange == 2)
+                    legal = true;
+                else
+                    legal = false;
+               
+                  
+                 dirLoR = yChange == 2 ? true
+                        :yChange == -2 ? true
+                        : false;
+                 
+                if (dirLoR == true && legal == true)
+                {
+                    legal = true;
+                    pieceTaken = true;
+                    redCount--;
+                }
+                else
+                    legal = false;
+                
+              } 
+        }
+        return legal;
+    }
+    
+   
+    
+    public static void thenMove(boolean legal)
+    {
+        // basically if it's legal and it's your turn then move
+        // then overwrite your old position with a blank space
+        // and if you take a piece overwrite that with a space
+        
+        
+        // Subracting  one from the corresponding piece count
+        // is in the isLegal function
+        
+         if (CB[piece[0]-1][piece[1]-1] == "[r]" && legal == true&& turn == 'r')
+         {
+             if (pieceTaken == true)
+             {
+                 pieceTaken = false;
+                 //Overwrite the piece taken
+                 CB[space[0]][space[1]-1-yChange/2] = "[ ]";
+             }
+            
+             //Overwrite the spot you were at
+              CB[piece[0]-1][piece[1]-1] = "[ ]";
+              
+              //Check to see if the piece was kinged
+              if (space[0]-1 != 0)
+                CB[space[0]-1][space[1]-1] = "[r]";
+              else
+                  CB[space[0]-1][space[1]-1] = "[R]";
+              turn = 'b';
+            
+         }
+         
+         if (CB[piece[0]-1][piece[1]-1] == "[R]" && legal == true&& turn == 'r')
+         {
+             if (pieceTaken == true)
+             {
+                 pieceTaken = false;
+                 int c = xChange/2;
+                
+                 CB[space[0]-1-c][space[1]-1-yChange/2] = "[ ]";
+             }
+             else
+                  turn = 'b';
+            
+              CB[piece[0]-1][piece[1]-1] = "[ ]";
+              CB[space[0]-1][space[1]-1] = "[R]";
+              
+             
+            
+         }
+         
+          if (CB[piece[0]-1][piece[1]-1] == "[b]" && legal == true&& turn == 'b')
+         {
+             if (pieceTaken == true)
+             {
+                 pieceTaken = false;
+                 CB[(space[0]-1)-xChange/2][(space[1]-1)-yChange/2] = "[ ]";
+             }
+             else
+                 turn = 'r';
+            
+              CB[piece[0]-1][piece[1]-1] = "[ ]";
+              if (space[0]-1 != 7)
+                CB[space[0]-1][space[1]-1] = "[b]";
+              else
+                  CB[space[0]-1][space[1]-1] = "[B]";
+            
+         }
+          
+          
+          if (CB[piece[0]-1][piece[1]-1] == "[B]" && legal == true&& turn == 'b')
+         {
+             if (pieceTaken == true)
+             {
+                 pieceTaken = false;
+                 int c = xChange/2;
+                
+                 if (xChange == -2)
+                     c = xChange/2;
+                 else
+                     c = xChange/2;
+                 
+                 CB[space[0]-1-c][space[1]-1-yChange/2] = "[ ]";
+             }
+             else
+                 turn = 'r';
+            
+              CB[piece[0]-1][piece[1]-1] = "[ ]";
+              CB[space[0]-1][space[1]-1] = "[B]";
+            
+         }
+    }
+      
+     public static void msgBox(String dialogue)
+     {
+         JOptionPane.showMessageDialog(frame,dialogue);
+         
+     }
+    }
+
+
+    
