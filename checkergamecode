@@ -45,7 +45,7 @@ public class CheckersGame {
         
     boolean legal;
     String pieceMove;
-    String spaceMove;
+    String spaceMove, oh;
     Scanner stdin = new Scanner(System. in);    
     
     while (redCount != 0 && blackCount != 0)
