@@ -44,7 +44,7 @@ public class CheckersGame {
         //stringArray.   
         
     boolean legal;
-    String pieceMove, hi;
+    String pieceMove;
     String spaceMove;
     Scanner stdin = new Scanner(System. in);    
     
