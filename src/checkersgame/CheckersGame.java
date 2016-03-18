@@ -36,20 +36,18 @@ public class CheckersGame {
    
    
     public static void main(String[] args) {
-    
         // Test point 6 3, 5 4;
         //JFileChooser fc = new JFileChooser();
         //fc.showOpenDialog(null);
         //ArrayList<Integer> stringArray = new ArrayList<Integer>();
         //stringArray.   
         
-    boolean legal;
-    String pieceMove;
-    String spaceMove;
-    Scanner stdin = new Scanner(System. in);    
+        boolean legal;
+        String pieceMove;
+        String spaceMove;
+        Scanner stdin = new Scanner(System. in);    
     
-    while (redCount != 0 && blackCount != 0)
-    {
+        while (redCount != 0 && blackCount != 0) {
         display();
         System.out.print("\n" + Character.toUpperCase(turn) + " - Piece: ");
         pieceMove = stdin.nextLine();
@@ -65,18 +63,14 @@ public class CheckersGame {
         //tests if its legal
         legal = canMove();
         //if it's legal then make the move
-        thenMove(legal);
-        
-    }
-    
-    
+        thenMove(legal);  
+        }
     }
 
-    public static void coord(String input, boolean var)
-    {
+    public static void coord(String input, boolean var) {
+        
         int point[] = new int[2];
         char temp;
-        
         
         //System.out.print(input.charAt(0));
         temp = input.charAt(0);
@@ -84,14 +78,11 @@ public class CheckersGame {
         temp = input.charAt(2);
         point[1] = Character.getNumericValue(temp);
         
-        if (var == true)
-        {
+        if (var == true) 
             piece = point;
-        }
-        else
-        {
+        else 
             space = point;
-        }
+        
     }
     public static void display()
     {
